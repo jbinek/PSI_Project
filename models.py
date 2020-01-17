@@ -18,6 +18,7 @@ for i in range(1, len(file_list_training)):
     X = X.append(pandas.read_csv(file_list_training[i], header=2, delimiter=",",
                                  names=["ECG", "EDA"], usecols=[3, 4], engine='python'))
 
+print(X.loc[:, 'ECG'])
 # print("X")
 # print(X)
 
@@ -83,8 +84,8 @@ print(metrics.confusion_matrix(expected, predicted))
 figure = plt.figure(figsize=(17, 9))
 h = .02     #step size for mesh
 
-x_min, x_max = X[:, 0].min() - .5, X[:, 0].max() + .5
-y_min, y_max = X[:, 1].min() - .5, X[:, 1].max() + .5
+x_min, x_max = (X.min()-.5).min(), (X.max()+.5).max()
+y_min, y_max = (y.min()-.5).min(), (y.max()+.5).max()
 xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
                          np.arange(y_min, y_max, h))
 
@@ -94,9 +95,9 @@ ax = plt.subplot()
 
 ax.set_title("Input data")
 # Plot the training points
-ax.scatter(X[:, 0], X[:, 1], c=y, cmap=cm_bright)
+ax.scatter(X.loc[:, 'ECG'], X.loc[:, 'EDA'], c=y, cmap=cm_bright)
 # Plot the testing points
-ax.scatter(test_X[:, 0], test_X[:, 1], c=test_y, cmap=cm_bright, alpha=0.6)
+ax.scatter(test_X.loc[:, 'ECG'], test_X.loc[:, 'EDA'], c=test_y, cmap=cm_bright, alpha=0.6)
 ax.set_xlim(xx.min(), xx.max())
 ax.set_ylim(yy.min(), yy.max())
 ax.set_xticks(())
@@ -116,9 +117,9 @@ Z = Z.reshape(xx.shape)
 ax.contourf(xx, yy, Z, cmap=cm, alpha=.8)
 
 # Plot also the training points
-ax.scatter(X[:, 0], X[:, 1], c=y, cmap=cm_bright, edgecolors='black', s=25)
+ax.scatter(X.loc[:, 'ECG'], X.loc[:, 'EDA'], c=y, cmap=cm_bright, edgecolors='black', s=25)
 # and testing points
-ax.scatter(X[:, 0], X[:, 1], c=y, cmap=cm_bright, alpha=0.6, edgecolors='black', s=25)
+ax.scatter(X.loc[:, 'ECG'], X.loc[:, 'EDA'], c=y, cmap=cm_bright, alpha=0.6, edgecolors='black', s=25)
 ax.set_xlim(xx.min(), xx.max())
 ax.set_ylim(yy.min(), yy.max())
 ax.set_xticks(())
@@ -140,9 +141,9 @@ Z = Z.reshape(xx.shape)
 ax.contourf(xx, yy, Z, cmap=cm, alpha=.8)
 
 # Plot also the training points
-ax.scatter(X[:, 0], X[:, 1], c=y, cmap=cm_bright, edgecolors='black', s=25)
+ax.scatter(X.loc[:, 'ECG'], X.loc[:, 'EDA'], c=y, cmap=cm_bright, edgecolors='black', s=25)
 # and testing points
-ax.scatter(X[:, 0], X[:, 1], c=y, cmap=cm_bright, alpha=0.6, edgecolors='black', s=25)
+ax.scatter(X.loc[:, 'ECG'], X.loc[:, 'EDA'], c=y, cmap=cm_bright, alpha=0.6, edgecolors='black', s=25)
 ax.set_xlim(xx.min(), xx.max())
 ax.set_ylim(yy.min(), yy.max())
 ax.set_xticks(())
