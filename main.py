@@ -2,46 +2,55 @@
 # reading csv
 import glob
 import os
+from scipy import stats
 from io import StringIO
-
 import pandas
+import numpy as np
 
 if not (os.path.isdir("Data_pre")):
     os.makedirs("Data_pre")
 else:
     print("Folder already done")
-file_list = glob.glob("C:/Users/binej/Desktop/psi/pre1" + '/*.csv')
+file_list = glob.glob("./BIRAFFE-procedure" + '/*.csv')
 
-tmp = pandas.read_csv(file_list[0], header=2, delimiter=";",
-                      names=["TIMESTAMP", "WIDGET-TYPE", "ANS"], usecols=[0, 5, 6], engine='python')
+procedureData = pandas.read_csv(file_list[0], header=2, delimiter=";",
+                                names=["TIMESTAMP", "WIDGET-TYPE", "ANS"], usecols=[0, 5, 6], engine='python')
 
 for i in range(1, len(file_list)):
-    tmp = tmp.append(pandas.read_csv(file_list[i], header=2, delimiter=";",
-                                     names=["TIMESTAMP", "WIDGET-TYPE", "ANS"], usecols=[0, 5, 6], engine='python'))
-tmp = tmp[tmp['WIDGET-TYPE'] != "emospace1"]
-tmp['TIMESTAMP'] = pandas.to_datetime(tmp['TIMESTAMP'], unit='s')
-tmp['TIMESTAMP'] = pandas.Series(tmp['TIMESTAMP']).dt.round("S")
-print(tmp['TIMESTAMP'])
-print((len(tmp)))
-print(tmp.head())
+    procedureData = procedureData.append(pandas.read_csv(file_list[i], header=2, delimiter=";",
+                                                         names=["TIMESTAMP", "WIDGET-TYPE", "ANS"], usecols=[0, 5, 6], engine='python'))
+procedureData = procedureData[procedureData['WIDGET-TYPE'] != "emospace1"]
+procedureData['TIMESTAMP'] = pandas.to_datetime(procedureData['TIMESTAMP'], unit='s')
+procedureData['TIMESTAMP'] = pandas.Series(procedureData['TIMESTAMP']).dt.round("S")
+print(procedureData['TIMESTAMP'])
+print((len(procedureData)))
+print(procedureData.head())
 
-file_list2 = glob.glob("C:/Users/binej/Desktop/psi/Data_pre" + '/*.csv')
+file_list2 = glob.glob("./BIRAFFE-biosigs" + '/*.csv')
 
-tmp2 = pandas.read_csv(file_list2[0], header=2, delimiter=",",
-                      names=["TIMESTAMP", "ECG", "EDA"], usecols=[0, 10, 11], engine='python')
+biosigsData = pandas.read_csv(file_list2[0], delimiter=";", engine='python')
 
 for i in range(1, len(file_list2)):
-    tmp2 = tmp2.append(pandas.read_csv(file_list[i], header=2, delimiter=",",
-                                     names=["TIMESTAMP", "ECG", "EDA"], usecols=[0, 10, 11], engine='python'))
+    biosigsData = biosigsData.append(pandas.read_csv(file_list[i], delimeter=";", engine='python'))
 
-tmp2['TIMESTAMP'] = pandas.Series(tmp2['TIMESTAMP']).dt.round("S")
-print(type(tmp2['TIMESTAMP']))
-print(tmp2.head())
-print(len(tmp2))
+biosigsData = biosigsData.dropna()
 
-mergedData = tmp.merge(right=tmp2, how="inner", on='TIMESTAMP')
+biosigsData['TIMESTAMP'] = pandas.to_datetime(biosigsData['TIMESTAMP'], unit='s')
+biosigsData['TIMESTAMP'] = pandas.Series(biosigsData['TIMESTAMP']).dt.round("S")
+
+biosigsData = biosigsData.set_index('TIMESTAMP')
+biosigsData = biosigsData.resample('1S').median()     #mean()
+
+print(biosigsData.head())
+print(len(biosigsData))
+
+mergedData = procedureData.merge(right=biosigsData, how="inner", on='TIMESTAMP')
 print(mergedData.head())
-
+print(len(mergedData))
+mergedData['ECG'] = stats.zscore(mergedData['ECG'], axis=0)
+mergedData['EDA'] = stats.zscore(mergedData['EDA'], axis=0)
+print(mergedData.head())
+mergedData.to_csv("PreprocessedData.csv", index=False)
 
 ########################################################################################################## normalizacja
 
