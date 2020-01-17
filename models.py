@@ -80,23 +80,23 @@ print(metrics.confusion_matrix(expected, predicted))
 
 
 # Graphs
-figure = plt.figure(figsize=(17, 9))
+figure = plt.figure()
 h = .02     #step size for mesh
 
-x_min, x_max = X[:, 0].min() - .5, X[:, 0].max() + .5
-y_min, y_max = X[:, 1].min() - .5, X[:, 1].max() + .5
+x_min, x_max = (X.min()-.5).min(), (X.max()+.5).max()
+y_min, y_max = (y.min()-.5).min(), (y.max()+.5).max()
 xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
                          np.arange(y_min, y_max, h))
 
 cm = plt.cm.RdBu
 cm_bright = ListedColormap(['#FF0000', '#0000FF'])
-ax = plt.subplot()
+ax = plt.subplot(3, 1, 1)
 
 ax.set_title("Input data")
 # Plot the training points
-ax.scatter(X[:, 0], X[:, 1], c=y, cmap=cm_bright)
+ax.scatter(X.loc[:, 'ECG'], X.loc[:, 'EDA'], c=y, cmap=cm_bright)
 # Plot the testing points
-ax.scatter(test_X[:, 0], test_X[:, 1], c=test_y, cmap=cm_bright, alpha=0.6)
+ax.scatter(test_X.loc[:, 'ECG'], test_X.loc[:, 'EDA'], c=test_y, cmap=cm_bright, alpha=0.6)
 ax.set_xlim(xx.min(), xx.max())
 ax.set_ylim(yy.min(), yy.max())
 ax.set_xticks(())
@@ -104,7 +104,7 @@ ax.set_yticks(())
 
 
 #net
-ax = plt.subplot()
+ax = plt.subplot(3, 1, 2)
 # Put the result into a color plot
 if hasattr(classsifier, "decision_function"):
     Z = classsifier.decision_function(np.c_[xx.ravel(), yy.ravel()])
@@ -116,9 +116,9 @@ Z = Z.reshape(xx.shape)
 ax.contourf(xx, yy, Z, cmap=cm, alpha=.8)
 
 # Plot also the training points
-ax.scatter(X[:, 0], X[:, 1], c=y, cmap=cm_bright, edgecolors='black', s=25)
+ax.scatter(X.loc[:, 'ECG'], X.loc[:, 'EDA'], c=y, cmap=cm_bright, edgecolors='black', s=25)
 # and testing points
-ax.scatter(X[:, 0], X[:, 1], c=y, cmap=cm_bright, alpha=0.6, edgecolors='black', s=25)
+ax.scatter(X.loc[:, 'ECG'], X.loc[:, 'EDA'], c=y, cmap=cm_bright, alpha=0.6, edgecolors='black', s=25)
 ax.set_xlim(xx.min(), xx.max())
 ax.set_ylim(yy.min(), yy.max())
 ax.set_xticks(())
@@ -128,7 +128,7 @@ ax.text(xx.max() - .3, yy.min() + .3, ('%.2f' % score).lstrip('0'), size=15, hor
 
 
 # BAYES
-ax = plt.subplot()
+ax = plt.subplot(3, 1, 3)
 # Put the result into a color plot
 if hasattr(model, "decision_function"):
     Z = model.decision_function(np.c_[xx.ravel(), yy.ravel()])
@@ -140,9 +140,9 @@ Z = Z.reshape(xx.shape)
 ax.contourf(xx, yy, Z, cmap=cm, alpha=.8)
 
 # Plot also the training points
-ax.scatter(X[:, 0], X[:, 1], c=y, cmap=cm_bright, edgecolors='black', s=25)
+ax.scatter(X.loc[:, 'ECG'], X.loc[:, 'EDA'], c=y, cmap=cm_bright, edgecolors='black', s=25)
 # and testing points
-ax.scatter(X[:, 0], X[:, 1], c=y, cmap=cm_bright, alpha=0.6, edgecolors='black', s=25)
+ax.scatter(X.loc[:, 'ECG'], X.loc[:, 'EDA'], c=y, cmap=cm_bright, alpha=0.6, edgecolors='black', s=25)
 ax.set_xlim(xx.min(), xx.max())
 ax.set_ylim(yy.min(), yy.max())
 ax.set_xticks(())
