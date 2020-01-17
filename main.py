@@ -28,29 +28,28 @@ print(procedureData.head())
 
 file_list2 = glob.glob("./BIRAFFE-biosigs" + '/*.csv')
 
-biosigsData = pandas.read_csv(file_list2[0], delimiter=";", engine='python')
+for i in range(0, len(file_list2)):
+    biosigsData = pandas.read_csv(file_list2[0], delimiter=";", engine='python')
+    biosigsData = biosigsData.dropna()
 
-for i in range(1, len(file_list2)):
-    biosigsData = biosigsData.append(pandas.read_csv(file_list[i], delimiter=";", engine='python'))
+    biosigsData['TIMESTAMP'] = pandas.to_datetime(biosigsData['TIMESTAMP'], unit='s')
+    biosigsData['TIMESTAMP'] = pandas.Series(biosigsData['TIMESTAMP']).dt.round("S")
 
-biosigsData = biosigsData.dropna()
+    biosigsData = biosigsData.set_index('TIMESTAMP')
+    biosigsData = biosigsData.resample('1S').median()  # mean()
 
-biosigsData['TIMESTAMP'] = pandas.to_datetime(biosigsData['TIMESTAMP'], unit='s')
-biosigsData['TIMESTAMP'] = pandas.Series(biosigsData['TIMESTAMP']).dt.round("S")
+    print(biosigsData.head())
+    print(len(biosigsData))
 
-biosigsData = biosigsData.set_index('TIMESTAMP')
-biosigsData = biosigsData.resample('1S').median()     #mean()
+    mergedData = procedureData.merge(right=biosigsData, how="inner", on='TIMESTAMP')
+    print(mergedData.head())
+    print(len(mergedData))
+    mergedData['ECG'] = stats.zscore(mergedData['ECG'], axis=0)
+    mergedData['EDA'] = stats.zscore(mergedData['EDA'], axis=0)
+    print(mergedData.head())
+    mergedData.to_csv('PreprocessedData'+str(i) + '.csv', index=False)
 
-print(biosigsData.head())
-print(len(biosigsData))
 
-mergedData = procedureData.merge(right=biosigsData, how="inner", on='TIMESTAMP')
-print(mergedData.head())
-print(len(mergedData))
-mergedData['ECG'] = stats.zscore(mergedData['ECG'], axis=0)
-mergedData['EDA'] = stats.zscore(mergedData['EDA'], axis=0)
-print(mergedData.head())
-mergedData.to_csv("PreprocessedData.csv", index=False)
 
 ########################################################################################################## normalizacja
 
