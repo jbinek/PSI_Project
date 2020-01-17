@@ -18,6 +18,7 @@ for i in range(1, len(file_list_training)):
     X = X.append(pandas.read_csv(file_list_training[i], header=2, delimiter=",",
                                  names=["ECG", "EDA"], usecols=[3, 4], engine='python'))
 
+print(X.loc[:, 'ECG'])
 # print("X")
 # print(X)
 
