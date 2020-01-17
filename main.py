@@ -31,7 +31,7 @@ file_list2 = glob.glob("./BIRAFFE-biosigs" + '/*.csv')
 biosigsData = pandas.read_csv(file_list2[0], delimiter=";", engine='python')
 
 for i in range(1, len(file_list2)):
-    biosigsData = biosigsData.append(pandas.read_csv(file_list[i], delimeter=";", engine='python'))
+    biosigsData = biosigsData.append(pandas.read_csv(file_list[i], delimiter=";", engine='python'))
 
 biosigsData = biosigsData.dropna()
 
