@@ -1,12 +1,14 @@
+from sklearn import metrics
 from sklearn.neural_network import MLPClassifier
 import glob
 import pandas
 import numpy as np
 from numpy import ravel
-from sklearn import metrics
 from sklearn.naive_bayes import GaussianNB
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
+from sklearn.model_selection import train_test_split
+
 
 ##########     DATA LOADING     ##########
 file_list_training = glob.glob("./training/" + '*.csv')
@@ -57,7 +59,7 @@ test_y = ravel(test_y)
 
 ##########     NEURAL NET     ##########
 # Creating neural net using Sckit-learn
-classsifier = MLPClassifier(solver='adam', alpha=1e-2, max_iter=1000)
+classsifier = MLPClassifier(solver='adam', alpha=1e-3, max_iter=1000)
 classsifier.fit(X, y)
 
 # Making Predictions
@@ -85,28 +87,17 @@ print(metrics.classification_report(expected, predicted))
 print(metrics.confusion_matrix(expected, predicted))
 
 # Graphs
-<<<<<<< HEAD
-h = .02     #step size for mesh
-
-x_min, x_max = (X.min()-.5).min(), (X.max()+.5).max()
-y_min, y_max = (y.min()-.5).min(), (y.max()+.5).max()
-=======
 figure = plt.figure()
 h = .02  # step size for mesh
 
 x_min, x_max = (X.min() - .5).min(), (X.max() + .5).max()
 y_min, y_max = (y.min() - .5).min(), (y.max() + .5).max()
->>>>>>> e091feefa60649db937afa567487896267cf9bee
 xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
                      np.arange(y_min, y_max, h))
 
 cm = plt.cm.RdBu
 cm_bright = ListedColormap(['#FF0000', '#0000FF'])
 
-<<<<<<< HEAD
-# NEURAL NET
-plt.figure(2)
-=======
 plt.title("Input data")
 # Plot the training points
 plt.scatter(X.loc[:, 'ECG'], X.loc[:, 'EDA'], c=y, cmap=cm_bright)
@@ -120,7 +111,6 @@ plt.show()
 
 # net
 ax = plt.subplot(3, 1, 2)
->>>>>>> e091feefa60649db937afa567487896267cf9bee
 # Put the result into a color plot
 if hasattr(classsifier, "decision_function"):
     Z = classsifier.decision_function(np.c_[xx.ravel(), yy.ravel()])
@@ -131,7 +121,10 @@ else:
 Z = Z.reshape(xx.shape)
 plt.contourf(xx, yy, Z, cmap=cm, alpha=.8)
 
-
+# Plot also the training points
+plt.scatter(X.loc[:, 'ECG'], X.loc[:, 'EDA'], c=y, cmap=cm_bright, edgecolors='black', s=25)
+# and testing points
+plt.scatter(test_X.loc[:, 'ECG'], test_X.loc[:, 'EDA'], c=test_y, cmap=cm_bright, alpha=0.6, edgecolors='black', s=25)
 plt.xlim(xx.min(), xx.max())
 plt.ylim(yy.min(), yy.max())
 plt.xticks(())
@@ -152,6 +145,10 @@ else:
 Z = Z.reshape(xx.shape)
 plt.contourf(xx, yy, Z, cmap=cm, alpha=.8)
 
+# Plot also the training points
+plt.scatter(X.loc[:, 'ECG'], X.loc[:, 'EDA'], c=y, cmap=cm_bright, edgecolors='black', s=25)
+# and testing points
+plt.scatter(test_X.loc[:, 'ECG'], test_X.loc[:, 'EDA'], c=test_y, cmap=cm_bright, alpha=0.6, edgecolors='black', s=25)
 plt.xlim(xx.min(), xx.max())
 plt.ylim(yy.min(), yy.max())
 plt.xticks(())
@@ -161,3 +158,16 @@ plt.text(xx.max() - .3, yy.min() + .3, ('%.2f' % score2).lstrip('0'), size=15, h
 
 figure.subplots_adjust(left=.02, right=.98)
 plt.show()
+
+#############  CALCULATING ACCURACY   ########################
+
+# splitting X and y into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=1)
+
+# making predictions on the testing set
+y_pred_bayes = model.predict(X_test)
+y_pred_neural_net = classsifier.predict(X_test)
+
+# comparing actual response values (y_test) with predicted response values (y_pred)
+print("Gaussian Naive Bayes model accuracy(in %):", metrics.accuracy_score(y_test, y_pred_bayes) * 100)
+print("Neural net accuracy(in %):", metrics.accuracy_score(y_test, y_pred_neural_net) * 100)
