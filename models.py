@@ -49,7 +49,7 @@ test_y = ravel(test_y)
 
 ##########     NEURAL NET     ##########
 # Creating neural net using Sckit-learn
-classsifier = MLPClassifier(solver='adam', alpha=1e-3, max_iter=1000)
+classsifier = MLPClassifier(solver='adam', alpha=1e-2, max_iter=1000)
 classsifier.fit(X, y)
 
 # Making Predictions
@@ -79,45 +79,6 @@ print(metrics.confusion_matrix(expected, predicted))
 
 
 # Graphs
-# acc = history_dict['acc']
-# val_acc = history_dict['val_acc']
-# loss = history_dict['loss']
-# val_loss = history_dict['val_loss']
-#
-# epochs = range(1, len(acc) + 1)
-#
-# # "bo" is for "blue dot"
-# plt.plot(epochs, loss, 'bo', label='Training loss')
-# # b is for "solid blue line"
-# plt.plot(epochs, val_loss, 'b', label='Validation loss')
-# plt.title('Training and validation loss')
-# plt.xlabel('Epochs')
-# plt.ylabel('Loss')
-# plt.legend()
-#
-# plt.show()
-#
-# acc2 = history_dict2['acc']
-# val_acc2 = history_dict2['val_acc']
-# loss2 = history_dict2['loss']
-# val_loss2 = history_dict2['val_loss']
-#
-# epochs = range(1, len(acc2) + 1)
-#
-# # "bo" is for "blue dot"
-# plt.plot(epochs, loss2, 'bo', label='Training loss')
-# # b is for "solid blue line"
-# plt.plot(epochs, val_loss2, 'b', label='Validation loss')
-# plt.title('Training and validation loss')
-# plt.xlabel('Epochs')
-# plt.ylabel('Loss')
-# plt.legend()
-#
-# plt.show()
-
-
-
-plt.figure(1)
 h = .02     #step size for mesh
 
 x_min, x_max = (X.min()-.5).min(), (X.max()+.5).max()
@@ -128,19 +89,7 @@ xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
 cm = plt.cm.RdBu
 cm_bright = ListedColormap(['#FF0000', '#0000FF'])
 
-plt.title("Input data")
-# Plot the training points
-plt.scatter(X.loc[:, 'ECG'], X.loc[:, 'EDA'], c=y, cmap=cm_bright)
-# Plot the testing points
-plt.scatter(test_X.loc[:, 'ECG'], test_X.loc[:, 'EDA'], c=test_y, cmap=cm_bright, alpha=0.6)
-plt.xlim(xx.min(), xx.max())
-plt.ylim(yy.min(), yy.max())
-plt.xticks(())
-plt.yticks(())
-plt.show()
-
-
-#net
+# NEURAL NET
 plt.figure(2)
 # Put the result into a color plot
 if hasattr(classsifier, "decision_function"):
@@ -152,10 +101,7 @@ else:
 Z = Z.reshape(xx.shape)
 plt.contourf(xx, yy, Z, cmap=cm, alpha=.8)
 
-# Plot also the training points
-plt.scatter(X.loc[:, 'ECG'], X.loc[:, 'EDA'], c=y, cmap=cm_bright, edgecolors='black', s=25)
-# and testing points
-plt.scatter(test_X.loc[:, 'ECG'], test_X.loc[:, 'EDA'], c=test_y, cmap=cm_bright, alpha=0.6, edgecolors='black', s=25)
+
 plt.xlim(xx.min(), xx.max())
 plt.ylim(yy.min(), yy.max())
 plt.xticks(())
@@ -177,10 +123,6 @@ else:
 Z = Z.reshape(xx.shape)
 plt.contourf(xx, yy, Z, cmap=cm, alpha=.8)
 
-# Plot also the training points
-plt.scatter(X.loc[:, 'ECG'], X.loc[:, 'EDA'], c=y, cmap=cm_bright, edgecolors='black', s=25)
-# and testing points
-plt.scatter(test_X.loc[:, 'ECG'], test_X.loc[:, 'EDA'], c=test_y, cmap=cm_bright, alpha=0.6, edgecolors='black', s=25)
 plt.xlim(xx.min(), xx.max())
 plt.ylim(yy.min(), yy.max())
 plt.xticks(())
